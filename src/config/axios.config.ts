@@ -1,6 +1,6 @@
 import axios from "axios";
 
 export default axios.create({
-    baseURL: "https://api-bbm.verce.app",
+    baseURL: "https://api-bbm.vercel.app",
     withCredentials: true,
 });
