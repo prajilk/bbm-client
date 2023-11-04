@@ -10,7 +10,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { SignUpSchema } from "@/lib/zodSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { checklistDefaultValues, useGlobalContext } from "@/context/store";
+import { useGlobalContext } from "@/context/store";
 import {
     Form,
     FormControl,
@@ -27,6 +27,7 @@ import { saveChecklist } from "@/lib/api/save-checklist";
 import { Dispatch, SetStateAction } from "react";
 import { ButterflyProps } from "@/lib/types";
 import { setCookie } from "cookies-next";
+import { getDistanceFromLatLonInKm } from "@/lib/utils";
 
 const SignUpForm = ({
     setSpecies,
@@ -36,7 +37,7 @@ const SignUpForm = ({
     const {
         setCurrentTab,
         checklistData,
-        setChecklistData,
+        setShowSuccess,
         isSignUpFormOpen,
         setIsSignUpFormOpen,
         isLoading,
@@ -51,6 +52,26 @@ const SignUpForm = ({
             password: "",
         },
     });
+
+    async function submitCounts(distanceCovered: number) {
+        try {
+            setIsLoading(true);
+            const data = await saveChecklist({
+                ...checklistData,
+                distanceCovered: distanceCovered,
+            });
+            if (data.countSaved) {
+                toast.success("Form submitted successfully.");
+                setSpecies([]);
+                setShowSuccess(true);
+                setCurrentTab("user");
+            }
+        } catch (error) {
+            toast.error("Failed to submit form. Try again!");
+        } finally {
+            setIsLoading(false);
+        }
+    }
 
     async function onSubmit(values: z.infer<typeof SignUpSchema>) {
         try {
@@ -74,21 +95,24 @@ const SignUpForm = ({
                     }
                 );
                 setIsSignUpFormOpen(false);
+                let distanceCovered;
                 try {
-                    const data = await saveChecklist(checklistData);
-                    if (data.countSaved) {
-                        toast.success("Form submitted successfully.");
-                        setSpecies([]);
-                        setChecklistData({
-                            ...checklistDefaultValues,
-                            email: checklistData.email,
-                            name: checklistData.name,
-                            contactNumber: checklistData.contactNumber,
+                    const location =
+                        window.navigator && window.navigator.geolocation;
+                    if (location) {
+                        location.getCurrentPosition(async (position) => {
+                            const coor2 = `${position.coords.latitude}, ${position.coords.longitude}`;
+
+                            distanceCovered = getDistanceFromLatLonInKm(
+                                checklistData.coordinates,
+                                coor2
+                            );
+                            await submitCounts(distanceCovered);
                         });
-                        setCurrentTab("user");
+                    } else {
+                        await submitCounts(0);
                     }
                 } catch (error: any) {
-                    console.log(error);
                     if (!error.response.data.countSaved)
                         toast.error("Failed to submit form. Try again!");
                 }
@@ -114,6 +138,7 @@ const SignUpForm = ({
                 </DialogDescription>
                 <Form {...form}>
                     <form
+                        id="sign-up-form"
                         onSubmit={form.handleSubmit(onSubmit)}
                         className="space-y-2"
                     >
@@ -165,6 +190,7 @@ const SignUpForm = ({
                             disabled={isLoading || !form.formState.isDirty}
                             className="float-right w-[7rem] bg-primaryGreen hover:bg-green-600"
                             type="submit"
+                            form="sign-up-form"
                         >
                             Register
                         </LoadingButton>
