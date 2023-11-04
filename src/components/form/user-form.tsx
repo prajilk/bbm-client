@@ -41,7 +41,7 @@ const UserForm = () => {
             form.setValue("email", decodedUser.email);
             form.setValue("name", decodedUser.name);
         }
-    }, []);
+    });
 
     async function onSubmit(values: z.infer<typeof ZodUserSchema>) {
         setChecklistData((prev) => ({ ...prev, ...values }));

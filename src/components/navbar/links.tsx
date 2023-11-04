@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import {
     Sheet,
     SheetContent,
-    SheetDescription,
     SheetHeader,
     SheetTitle,
     SheetTrigger,
@@ -48,6 +47,7 @@ const LINKS = [
 ];
 
 const Links = () => {
+    const pathname = usePathname();
     return (
         <>
             <div className="block lg:hidden">
@@ -66,7 +66,7 @@ const Links = () => {
                             {LINKS.map((link, i) => (
                                 <li
                                     className={`${
-                                        usePathname() === link.href
+                                        pathname === link.href
                                             ? "text-primaryGreen font-medium"
                                             : ""
                                     } cursor-pointer hover:text-primaryGreen duration-300 px-2 py-1`}
@@ -83,7 +83,7 @@ const Links = () => {
                 {LINKS.map((link, i) => (
                     <li
                         className={`${
-                            usePathname() === link.href
+                            pathname === link.href
                                 ? "text-[#5dc269] font-medium"
                                 : ""
                         } cursor-pointer hover:text-primaryGreen duration-300 px-2 py-1`}

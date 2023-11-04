@@ -21,7 +21,7 @@ const CountSuccess = () => {
             name: checklistData.name,
             contactNumber: checklistData.contactNumber,
         });
-    }, []);
+    });
     return (
         <Dialog
             open={showSuccess}
