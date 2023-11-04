@@ -1,13 +1,15 @@
 import { Info } from "lucide-react";
 import {
     Dialog,
+    DialogClose,
     DialogContent,
-    DialogDescription,
+    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
 } from "../ui/dialog";
 import { countInstructions } from "@/lib/data";
+import { Button } from "../ui/button";
 
 const CountInstruction = () => {
     return (
@@ -33,6 +35,13 @@ const CountInstruction = () => {
                         </div>
                     ))}
                 </div>
+                <DialogFooter>
+                    <DialogClose className="flex justify-end">
+                        <Button className="bg-primaryGreen hover:bg-green-600">
+                            Close
+                        </Button>
+                    </DialogClose>
+                </DialogFooter>
             </DialogContent>
         </Dialog>
     );

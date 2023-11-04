@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
     Sheet,
+    SheetClose,
     SheetContent,
     SheetHeader,
     SheetTitle,
@@ -72,7 +73,11 @@ const Links = () => {
                                     } cursor-pointer hover:text-primaryGreen duration-300 px-2 py-1`}
                                     key={i}
                                 >
-                                    <Link href={link.href}>{link.title}</Link>
+                                    <SheetClose asChild>
+                                        <Link href={link.href}>
+                                            {link.title}
+                                        </Link>
+                                    </SheetClose>
                                 </li>
                             ))}
                         </ul>

@@ -91,6 +91,7 @@ const ChecklistForm = () => {
 
     async function submitCounts(distanceCovered: number) {
         try {
+            setIsLoading(true);
             const data = await saveChecklist({
                 ...checklistData,
                 distanceCovered: distanceCovered,
@@ -103,6 +104,8 @@ const ChecklistForm = () => {
             }
         } catch (error) {
             toast.error("Failed to submit form. Try again!");
+        } finally {
+            setIsLoading(false);
         }
     }
 
