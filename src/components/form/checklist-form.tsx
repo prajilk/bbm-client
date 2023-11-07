@@ -15,6 +15,7 @@ import axios from "@/config/axios.config";
 import { saveChecklist } from "@/lib/api/save-checklist";
 import SignUpForm from "./signup-form";
 import { getDistanceFromLatLonInKm } from "@/lib/utils";
+import { validateUser } from "@/lib/api/validate-user";
 
 const ChecklistForm = () => {
     const {
@@ -105,18 +106,28 @@ const ChecklistForm = () => {
     async function submitCounts(distanceCovered: number) {
         try {
             setIsLoading(true);
+            localStorage.setItem(
+                "butterfly-count",
+                JSON.stringify({
+                    ...checklistData,
+                    distanceCovered: distanceCovered,
+                })
+            );
             const data = await saveChecklist({
                 ...checklistData,
                 distanceCovered: distanceCovered,
             });
             if (data.countSaved) {
                 toast.success("Form submitted successfully.");
+                localStorage.removeItem("butterfly-count");
                 setSpecies([]);
                 setShowSuccess(true);
                 setCurrentTab("user");
             }
         } catch (error) {
-            toast.error("Failed to submit form. Try again!");
+            toast.error(
+                "Failed to submit form. Refresh the page to submit again!"
+            );
         } finally {
             setIsLoading(false);
         }
@@ -126,10 +137,8 @@ const ChecklistForm = () => {
         e.preventDefault();
         try {
             setIsLoading(true);
-            const { data } = await axios.post("/api/user/validate-user", {
-                email: checklistData.email,
-            });
-            if (data.userVerified) {
+            const data = await validateUser(checklistData.email);
+            if (data?.userVerified) {
                 let distanceCovered;
                 try {
                     const location =

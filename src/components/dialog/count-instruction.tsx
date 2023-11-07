@@ -14,7 +14,10 @@ import { Button } from "../ui/button";
 const CountInstruction = () => {
     return (
         <Dialog>
-            <DialogTrigger className="flex justify-center items-center rounded-full bg-gray-200 p-3">
+            <DialogTrigger
+                className="flex justify-center items-center rounded-full bg-gray-200 p-3"
+                title="About"
+            >
                 <Info />
             </DialogTrigger>
             <DialogContent className="max-w-2xl">

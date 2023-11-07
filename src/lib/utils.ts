@@ -29,7 +29,7 @@ export function getDistanceFromLatLonInKm(coor1: string, coor2: string) {
     const lat2 = coor2.split(",")[0];
     const lon2 = coor2.split(",")[1];
 
-    const R = 6371; // Radius of the earth in km
+    const R = 6371000; // Radius of the earth in m
     const dLat = deg2rad(Number(lat2) - Number(lat1)); // deg2rad below
     const dLon = deg2rad(Number(lon2) - Number(lon1));
     const a =
@@ -39,7 +39,7 @@ export function getDistanceFromLatLonInKm(coor1: string, coor2: string) {
             Math.sin(dLon / 2) *
             Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const d = R * c; // Distance in km
+    const d = R * c; // Distance in m
     return d;
 }
 

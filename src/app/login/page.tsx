@@ -64,7 +64,7 @@ const Login = () => {
 
     return (
         <Container className="py-16 md:py-24">
-            <div className="bg-white md:rounded-3xl p-7 md:p-10 max-w-sm mx-auto shadow-sm border">
+            <div className="bg-white rounded-lg md:rounded-3xl p-7 md:p-10 max-w-sm mx-2 mt-5 md:mx-auto shadow-sm border">
                 <h1 className="text-center text-xl font-medium">Login</h1>
                 <Form {...form}>
                     <form

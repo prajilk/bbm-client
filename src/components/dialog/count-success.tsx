@@ -1,7 +1,7 @@
 import { Dialog, DialogContent } from "../ui/dialog";
 import { CheckCircle } from "lucide-react";
 import { useGlobalContext, checklistDefaultValues } from "@/context/store";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 const CountSuccess = () => {
     const { checklistData, setShowSuccess, showSuccess, setChecklistData } =
@@ -46,7 +46,7 @@ const CountSuccess = () => {
                     <li className="text-xs md:text-sm">
                         Total Distance covered:{" "}
                         <span className="font-bold">
-                            {successData.distanceCovered?.toFixed(1)} KM
+                            {successData.distanceCovered?.toFixed(4)} M
                         </span>
                     </li>
                 </ul>

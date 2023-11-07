@@ -16,10 +16,13 @@ import {
 } from "../ui/form";
 import { useGlobalContext } from "@/context/store";
 import axios from "@/config/axios.config";
+import { useState } from "react";
+import { Loader } from "lucide-react";
 
 const LocationForm = () => {
     const { setCurrentTab, checklistData, setChecklistData } =
         useGlobalContext();
+    const [isFetchingElevation, setIsFetchingElevation] = useState(false);
 
     const form = useForm<z.infer<typeof ZodLocationSchema>>({
         resolver: zodResolver(ZodLocationSchema),
@@ -52,6 +55,7 @@ const LocationForm = () => {
                         `${position.coords.latitude}, ${position.coords.longitude}`
                     );
                     try {
+                        setIsFetchingElevation(true);
                         const response = await axios.get(
                             `/elevation?latitude=${position.coords.latitude}&longitude=${position.coords.longitude}`
                         );
@@ -62,6 +66,8 @@ const LocationForm = () => {
                             );
                     } catch (error) {
                         return;
+                    } finally {
+                        setIsFetchingElevation(false);
                     }
                 },
                 (error) => {
@@ -99,46 +105,50 @@ const LocationForm = () => {
                         </FormItem>
                     )}
                 />
-                <FormField
-                    control={form.control}
-                    name="startTime"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormControl>
-                                <div className="space-y-1">
-                                    <Label htmlFor="startTime">
-                                        Start Time
-                                    </Label>
-                                    <Input
-                                        id="startTime"
-                                        type="time"
-                                        {...field}
-                                    />
-                                </div>
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="endTime"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormControl>
-                                <div className="space-y-1">
-                                    <Label htmlFor="endTime">End Time</Label>
-                                    <Input
-                                        id="endTime"
-                                        type="time"
-                                        {...field}
-                                    />
-                                </div>
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+                <div className="grid grid-cols-2 gap-2">
+                    <FormField
+                        control={form.control}
+                        name="startTime"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormControl>
+                                    <div className="space-y-1">
+                                        <Label htmlFor="startTime">
+                                            Start Time
+                                        </Label>
+                                        <Input
+                                            id="startTime"
+                                            type="time"
+                                            {...field}
+                                        />
+                                    </div>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="endTime"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormControl>
+                                    <div className="space-y-1">
+                                        <Label htmlFor="endTime">
+                                            End Time
+                                        </Label>
+                                        <Input
+                                            id="endTime"
+                                            type="time"
+                                            {...field}
+                                        />
+                                    </div>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                </div>
                 <FormField
                     control={form.control}
                     name="location"
@@ -208,6 +218,15 @@ const LocationForm = () => {
                                         type="text"
                                         {...field}
                                     />
+                                    {isFetchingElevation && (
+                                        <p className="text-xs text-primaryGreen flex gap-2 items-center">
+                                            Fetching altitude...
+                                            <Loader
+                                                className="animate-spin text-primaryGreen"
+                                                size={15}
+                                            />
+                                        </p>
+                                    )}
                                 </div>
                             </FormControl>
                             <FormMessage />
