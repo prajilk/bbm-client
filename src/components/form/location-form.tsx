@@ -15,7 +15,7 @@ import {
     FormMessage,
 } from "../ui/form";
 import { useGlobalContext } from "@/context/store";
-import { formatCurrentDate, getDistanceFromLatLonInKm } from "@/lib/utils";
+import axios from "@/config/axios.config";
 
 const LocationForm = () => {
     const { setCurrentTab, checklistData, setChecklistData } =
@@ -46,11 +46,23 @@ const LocationForm = () => {
 
         if (location) {
             location.getCurrentPosition(
-                (position) => {
+                async (position) => {
                     form.setValue(
                         "coordinates",
                         `${position.coords.latitude}, ${position.coords.longitude}`
                     );
+                    try {
+                        const response = await axios.get(
+                            `/elevation?latitude=${position.coords.latitude}&longitude=${position.coords.longitude}`
+                        );
+                        if (response?.data?.elevation)
+                            form.setValue(
+                                "altitude",
+                                response.data.elevation[0] ?? 0
+                            );
+                    } catch (error) {
+                        return;
+                    }
                 },
                 (error) => {
                     form.setValue(

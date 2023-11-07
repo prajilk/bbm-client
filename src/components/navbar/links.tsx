@@ -18,28 +18,8 @@ const LINKS = [
         href: "/",
     },
     {
-        title: "About us",
-        href: "/about",
-    },
-    {
-        title: "Data",
-        href: "/data",
-    },
-    {
-        title: "How to participate",
-        href: "/participate",
-    },
-    {
         title: "Butterfly counts",
         href: "/butterfly-counts",
-    },
-    {
-        title: "Resources",
-        href: "/resources",
-    },
-    {
-        title: "Calender",
-        href: "/calender",
     },
     {
         title: "Login",

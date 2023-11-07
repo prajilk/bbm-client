@@ -17,6 +17,7 @@ export type SearchResultCardProps = {
     setSelectedButterfly: React.Dispatch<React.SetStateAction<ButterflyProps>>;
     setShowSearch: React.Dispatch<React.SetStateAction<boolean>>;
     setCommonInput: React.Dispatch<React.SetStateAction<string>>;
+    setBinomialInput: React.Dispatch<React.SetStateAction<string>>;
     result: ButterflyProps;
 };
 

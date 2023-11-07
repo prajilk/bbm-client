@@ -15,6 +15,7 @@ const SearchResultCard = (props: SearchResultCardProps) => {
                         image: props.result.image,
                     });
                     props.setCommonInput(props.result.commonName);
+                    props.setBinomialInput(props.result.binomialName);
                     props.setShowSearch(false);
                 }}
             >

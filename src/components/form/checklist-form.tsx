@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, ChangeEvent, Dispatch, SetStateAction } from "react";
+import React, { useState, ChangeEvent } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
@@ -15,8 +15,6 @@ import axios from "@/config/axios.config";
 import { saveChecklist } from "@/lib/api/save-checklist";
 import SignUpForm from "./signup-form";
 import { getDistanceFromLatLonInKm } from "@/lib/utils";
-import { Dialog, DialogContent } from "../ui/dialog";
-import { CheckCircle } from "lucide-react";
 
 const ChecklistForm = () => {
     const {
@@ -29,8 +27,10 @@ const ChecklistForm = () => {
         setShowSuccess,
     } = useGlobalContext();
 
-    const [showSearch, setShowSearch] = useState(false);
+    const [showCommonSearch, setCommonSearch] = useState(false);
+    const [showBinomialSearch, setBinomialSearch] = useState(false);
     const [commonInput, setCommonInput] = useState("");
+    const [binomialInput, setBinomialInput] = useState("");
     const [species, setSpecies] = useState<ButterflyProps[]>(
         checklistData.speciesFound
     );
@@ -45,12 +45,24 @@ const ChecklistForm = () => {
 
     function findCommonName(e: ChangeEvent<HTMLInputElement>) {
         setCommonInput(e.target.value);
-        setShowSearch(true);
+        setCommonSearch(true);
         const result = ButterfliesJson.filter((butterfly) =>
             butterfly.commonName
                 .toLowerCase()
-                .startsWith(e.target.value.toLowerCase())
+                .includes(e.target.value.toLowerCase())
         );
+        setSearchResult(result);
+    }
+
+    function findBinomialName(e: ChangeEvent<HTMLInputElement>) {
+        setBinomialInput(e.target.value);
+        setBinomialSearch(true);
+        const result = ButterfliesJson.filter((butterfly) =>
+            butterfly.binomialName
+                .toLowerCase()
+                .includes(e.target.value.toLowerCase())
+        );
+        setCommonInput(selectedButterfly?.commonName);
         setSearchResult(result);
     }
 
@@ -71,6 +83,7 @@ const ChecklistForm = () => {
                 return [...prevSpecies, selectedButterfly];
             });
             setCommonInput("");
+            setBinomialInput("");
             toast.success(`"${commonInput}" added successfully!`);
             setChecklistData((prev) => ({
                 ...prev,
@@ -161,8 +174,8 @@ const ChecklistForm = () => {
                     onChange={findCommonName}
                 />
                 <div
-                    className={`absolute w-full h-60 scrollbar-thin overflow-y-scroll bg-white top-[4.3rem] rounded-md border p-3 shadow-lg ${
-                        showSearch ? "block" : "hidden"
+                    className={`absolute w-full h-60 scrollbar-thin overflow-y-scroll bg-white top-[calc(100%+.25rem)] rounded-md border p-3 shadow-lg z-50 ${
+                        showCommonSearch ? "block" : "hidden"
                     }`}
                 >
                     {searchResult.length !== 0 ? (
@@ -171,31 +184,51 @@ const ChecklistForm = () => {
                                 key={i}
                                 result={result}
                                 setCommonInput={setCommonInput}
+                                setBinomialInput={setBinomialInput}
                                 setSelectedButterfly={setSelectedButterfly}
-                                setShowSearch={setShowSearch}
+                                setShowSearch={setCommonSearch}
                             />
                         ))
                     ) : (
                         <SpeciesNotFound
                             commonInput={commonInput}
                             setSelectedButterfly={setSelectedButterfly}
-                            setShowSearch={setShowSearch}
+                            setShowSearch={setCommonSearch}
                         />
                     )}
                 </div>
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1 relative">
                 <Label htmlFor="binominal-name">Binominal Name</Label>
                 <Input
                     id="binominal-name"
-                    value={selectedButterfly?.binomialName}
-                    onChange={(e) =>
-                        setSelectedButterfly((prev) => ({
-                            ...prev,
-                            binomialName: e.target.value,
-                        }))
-                    }
+                    value={binomialInput}
+                    onChange={findBinomialName}
                 />
+                <div
+                    className={`absolute w-full h-60 scrollbar-thin overflow-y-scroll bg-white top-[calc(100%+.25rem)] rounded-md border p-3 shadow-lg ${
+                        showBinomialSearch ? "block" : "hidden"
+                    }`}
+                >
+                    {searchResult.length !== 0 ? (
+                        searchResult.map((result, i) => (
+                            <SearchResultCard
+                                key={i}
+                                result={result}
+                                setCommonInput={setCommonInput}
+                                setBinomialInput={setBinomialInput}
+                                setSelectedButterfly={setSelectedButterfly}
+                                setShowSearch={setBinomialSearch}
+                            />
+                        ))
+                    ) : (
+                        <SpeciesNotFound
+                            commonInput={binomialInput}
+                            setSelectedButterfly={setSelectedButterfly}
+                            setShowSearch={setBinomialSearch}
+                        />
+                    )}
+                </div>
             </div>
             <div className="space-y-1">
                 <Label htmlFor="remarks">
