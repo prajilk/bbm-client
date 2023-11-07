@@ -254,7 +254,7 @@ const ChecklistForm = () => {
                 <hr />
                 <div className="my-5">
                     {species.length !== 0 ? (
-                        species.reverse().map((specie, i) => (
+                        species.map((specie, i) => (
                             <React.Fragment key={i}>
                                 <SpeciesListCard
                                     specie={specie}
