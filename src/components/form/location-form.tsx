@@ -23,6 +23,7 @@ const LocationForm = () => {
     const { setCurrentTab, checklistData, setChecklistData } =
         useGlobalContext();
     const [isFetchingElevation, setIsFetchingElevation] = useState(false);
+    const [isInvalidEndTime, setIsInvalidEndTime] = useState(false);
 
     const form = useForm<z.infer<typeof ZodLocationSchema>>({
         resolver: zodResolver(ZodLocationSchema),
@@ -40,8 +41,18 @@ const LocationForm = () => {
     });
 
     async function onSubmit(values: z.infer<typeof ZodLocationSchema>) {
-        setChecklistData((prev) => ({ ...prev, ...values }));
-        setCurrentTab("checklist");
+        setIsInvalidEndTime(false);
+        const { startTime, endTime } = values;
+
+        const startTimeDate = new Date(`1970-01-01T${startTime ?? "00:00"}`);
+        const endTimeDate = new Date(`1970-01-01T${endTime ?? "00:00"}`);
+        if (endTimeDate < startTimeDate) {
+            setIsInvalidEndTime(true);
+            scrollTo({ top: 100 });
+        } else {
+            setChecklistData((prev) => ({ ...prev, ...values }));
+            setCurrentTab("checklist");
+        }
     }
 
     function getMyLocation() {
@@ -133,7 +144,7 @@ const LocationForm = () => {
                         render={({ field }) => (
                             <FormItem>
                                 <FormControl>
-                                    <div className="space-y-1">
+                                    <div className="space-y-1" id="endTime">
                                         <Label htmlFor="endTime">
                                             End Time
                                         </Label>
@@ -145,6 +156,11 @@ const LocationForm = () => {
                                     </div>
                                 </FormControl>
                                 <FormMessage />
+                                {isInvalidEndTime && (
+                                    <p className="text-xs text-destructive">
+                                        End time must be greater than start time
+                                    </p>
+                                )}
                             </FormItem>
                         )}
                     />
