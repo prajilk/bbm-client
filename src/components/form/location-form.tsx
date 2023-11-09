@@ -152,6 +152,10 @@ const LocationForm = () => {
                                             id="endTime"
                                             type="time"
                                             {...field}
+                                            onChange={(e) => {
+                                                field.onChange(e.target.value);
+                                                setIsInvalidEndTime(false);
+                                            }}
                                         />
                                     </div>
                                 </FormControl>
