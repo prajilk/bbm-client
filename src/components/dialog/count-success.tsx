@@ -14,6 +14,7 @@ const CountSuccess = () => {
         ),
         distanceCovered: checklistData.distanceCovered,
     });
+
     useEffect(() => {
         setChecklistData({
             ...checklistDefaultValues,
@@ -21,7 +22,7 @@ const CountSuccess = () => {
             name: checklistData.name,
             contactNumber: checklistData.contactNumber,
         });
-    });
+    }, []);
     return (
         <Dialog
             open={showSuccess}

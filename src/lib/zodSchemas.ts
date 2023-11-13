@@ -60,7 +60,12 @@ export const ZodLocationSchema = z.object({
             message: "Invalid coordinates format or out of range.",
         }
     ),
-    altitude: z.number().optional(),
+    altitude: z
+        .string()
+        .refine((value) => /^\d+$/.test(value), {
+            message: "Invalid Altitude.",
+        })
+        .optional(),
     weather: z.string().optional(),
     imageLinks: z.string().optional(),
     comments: z.string().optional(),

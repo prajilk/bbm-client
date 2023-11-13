@@ -1,7 +1,7 @@
 "use client";
 
 import { ChecklistProps } from "@/lib/types";
-import { formatCurrentDate } from "@/lib/utils";
+import { formatCurrentDate, getCurrentTime } from "@/lib/utils";
 import {
     createContext,
     useContext,
@@ -30,11 +30,11 @@ export const checklistDefaultValues = {
     email: "",
     teamNameOrNumber: "",
     date: formatCurrentDate(),
-    startTime: "00:00",
-    endTime: "00:00",
+    startTime: getCurrentTime(),
+    endTime: getCurrentTime(),
     location: "",
     coordinates: "",
-    altitude: 0,
+    altitude: "",
     distanceCovered: 0,
     weather: "",
     imageLinks: "",

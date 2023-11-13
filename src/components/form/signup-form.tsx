@@ -24,16 +24,10 @@ import LoadingButton from "../ui/loading-button";
 import axios from "@/config/axios.config";
 import { toast } from "sonner";
 import { saveChecklist } from "@/lib/api/save-checklist";
-import { Dispatch, SetStateAction } from "react";
-import { ButterflyProps } from "@/lib/types";
 import { setCookie } from "cookies-next";
 import { getDistanceFromLatLonInKm } from "@/lib/utils";
 
-const SignUpForm = ({
-    setSpecies,
-}: {
-    setSpecies: Dispatch<SetStateAction<ButterflyProps[]>>;
-}) => {
+const SignUpForm = () => {
     const {
         setCurrentTab,
         checklistData,
@@ -62,7 +56,6 @@ const SignUpForm = ({
             });
             if (data.countSaved) {
                 toast.success("Form submitted successfully.");
-                setSpecies([]);
                 setShowSuccess(true);
                 setCurrentTab("user");
             }

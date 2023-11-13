@@ -6,7 +6,7 @@ import Marquee from "react-fast-marquee";
 
 const PartnersMarquee = () => {
     return (
-        <div className="py-10 space-y-10">
+        <div className="py-10 space-y-10 bg-white">
             <h1 className="mx-auto text-xl md:text-3xl font-semibold border-b-2 border-primaryGreen w-fit">
                 Our Partners
             </h1>

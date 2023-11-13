@@ -75,7 +75,7 @@ const LocationForm = () => {
                         if (response?.data?.elevation)
                             form.setValue(
                                 "altitude",
-                                response.data.elevation[0] ?? 0
+                                response.data.elevation[0]?.toString() ?? "0"
                             );
                     } catch (error) {
                         return;
@@ -118,29 +118,29 @@ const LocationForm = () => {
                         </FormItem>
                     )}
                 />
-                <div className="grid grid-cols-2 gap-2">
-                    <FormField
-                        control={form.control}
-                        name="startTime"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormControl>
-                                    <div className="space-y-1">
-                                        <Label htmlFor="startTime">
-                                            Start Time
-                                        </Label>
-                                        <Input
-                                            id="startTime"
-                                            type="time"
-                                            {...field}
-                                        />
-                                    </div>
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
+                {/* <div className="grid grid-cols-2 gap-2"> */}
+                <FormField
+                    control={form.control}
+                    name="startTime"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormControl>
+                                <div className="space-y-1">
+                                    <Label htmlFor="startTime">
+                                        Start Time
+                                    </Label>
+                                    <Input
+                                        id="startTime"
+                                        type="time"
+                                        {...field}
+                                    />
+                                </div>
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                {/* <FormField
                         control={form.control}
                         name="endTime"
                         render={({ field }) => (
@@ -169,8 +169,8 @@ const LocationForm = () => {
                                 )}
                             </FormItem>
                         )}
-                    />
-                </div>
+                    /> */}
+                {/* </div> */}
                 <FormField
                     control={form.control}
                     name="location"

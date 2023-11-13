@@ -63,8 +63,8 @@ export default function Home() {
                     </div>
                 </Container>
             </div>
-            <PartnersMarquee />
-            <TestimonialSlider />
+            {/* <PartnersMarquee /> */}
+            {/* <TestimonialSlider /> */}
         </>
     );
 }

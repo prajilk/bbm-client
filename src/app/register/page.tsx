@@ -12,8 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import LoadingButton from "@/components/ui/loading-button";
 import axios from "@/config/axios.config";
-import { login } from "@/lib/api/login";
-import { AuthSchema } from "@/lib/zodSchemas";
+import { SignUpSchema } from "@/lib/zodSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { setCookie } from "cookies-next";
 import Link from "next/link";
@@ -23,41 +22,42 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
-const Login = () => {
+const Register = () => {
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
 
-    const form = useForm<z.infer<typeof AuthSchema>>({
-        resolver: zodResolver(AuthSchema),
-        defaultValues: {
-            email: "",
-            password: "",
-        },
+    const form = useForm<z.infer<typeof SignUpSchema>>({
+        resolver: zodResolver(SignUpSchema),
     });
 
-    async function onSubmit(values: z.infer<typeof AuthSchema>) {
+    async function onSubmit(values: z.infer<typeof SignUpSchema>) {
         try {
             setIsLoading(true);
-            const data = await login(values);
-            setCookie(
-                "user",
-                btoa(
-                    JSON.stringify({
-                        id: data.user.id,
-                        email: data.user.email,
-                        name: data.user.fullname,
-                    })
-                ),
-                {
-                    expires: new Date(
-                        new Date().getTime() + 30 * 24 * 60 * 60 * 1000
+            const { data } = await axios.post("/api/user/register", values);
+            if (data.registered) {
+                toast.success("User registered successfully.");
+                setCookie(
+                    "user",
+                    btoa(
+                        JSON.stringify({
+                            id: data.id,
+                            email: values.email,
+                            name: values.fullname,
+                        })
                     ),
-                }
-            );
-            toast.success("Logged in successfully.");
-            router.replace("/");
+                    {
+                        expires: new Date(
+                            new Date().getTime() + 30 * 24 * 60 * 60 * 1000
+                        ),
+                    }
+                );
+                router.replace("/");
+            }
         } catch (error: any) {
-            toast.error(error.response.data?.message || "Something went wrong");
+            if (error.response.data.message)
+                return toast.error(error.response.data.message);
+            if (!error.response.data.registered)
+                toast.error("Registration failed. Something went wrong!");
         } finally {
             setIsLoading(false);
         }
@@ -70,8 +70,24 @@ const Login = () => {
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit(onSubmit)}
-                        className="space-y-8"
+                        className="space-y-3"
                     >
+                        <FormField
+                            control={form.control}
+                            name="fullname"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Fullname</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            placeholder="Fullname"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                         <FormField
                             control={form.control}
                             name="email"
@@ -108,17 +124,17 @@ const Login = () => {
                             disabled={isLoading}
                             className="w-full bg-primaryGreen hover:bg-green-600"
                         >
-                            Log in
+                            Register
                         </LoadingButton>
                         <hr />
                         <div>
                             <h1 className="text-sm">
-                                Don&apos;t have an account?{" "}
+                                Already have an account?{" "}
                                 <Link
-                                    href={"/register"}
+                                    href={"/login"}
                                     className="text-primaryGreen"
                                 >
-                                    Register now
+                                    Log in
                                 </Link>
                             </h1>
                         </div>
@@ -128,5 +144,4 @@ const Login = () => {
         </Container>
     );
 };
-
-export default Login;
+export default Register;

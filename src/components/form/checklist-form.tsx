@@ -13,7 +13,7 @@ import SearchResultCard from "../species/search-result-card";
 import { useGlobalContext } from "@/context/store";
 import { saveChecklist } from "@/lib/api/save-checklist";
 import SignUpForm from "./signup-form";
-import { getDistanceFromLatLonInKm } from "@/lib/utils";
+import { getCurrentTime, getDistanceFromLatLonInKm } from "@/lib/utils";
 import { validateUser } from "@/lib/api/validate-user";
 
 const ChecklistForm = () => {
@@ -31,9 +31,6 @@ const ChecklistForm = () => {
     const [showBinomialSearch, setBinomialSearch] = useState(false);
     const [commonInput, setCommonInput] = useState("");
     const [binomialInput, setBinomialInput] = useState("");
-    const [species, setSpecies] = useState<ButterflyProps[]>(
-        checklistData.speciesFound
-    );
     const [selectedButterfly, setSelectedButterfly] = useState<ButterflyProps>({
         binomialName: "",
         commonName: "",
@@ -71,27 +68,36 @@ const ChecklistForm = () => {
             selectedButterfly.binomialName !== "" &&
             selectedButterfly.commonName !== ""
         ) {
-            setSpecies((prevSpecies) => {
-                if (
-                    prevSpecies.some(
-                        (species) =>
-                            species.binomialName ===
-                            selectedButterfly.binomialName
-                    )
-                )
-                    return prevSpecies;
-                return [...prevSpecies, selectedButterfly];
-            });
             setCommonInput("");
             setBinomialInput("");
             toast.success(`"${commonInput}" added successfully!`);
-            setChecklistData((prev) => ({
-                ...prev,
-                speciesFound: [
-                    ...prev.speciesFound,
-                    Object.assign({}, selectedButterfly, { count: 1 }),
-                ],
-            }));
+
+            setChecklistData((prev) => {
+                const updatedSpeciesFound = [...prev.speciesFound];
+                const index = updatedSpeciesFound.findIndex(
+                    (specie) =>
+                        specie.binomialName === selectedButterfly.binomialName
+                );
+
+                if (index !== -1) {
+                    // Species found, update count
+                    updatedSpeciesFound[index] = {
+                        ...updatedSpeciesFound[index],
+                        count: (updatedSpeciesFound[index].count || 0) + 1,
+                    };
+                } else {
+                    // Species not found, add a new entry
+                    updatedSpeciesFound.push({
+                        ...selectedButterfly,
+                        count: 1,
+                    });
+                }
+
+                return {
+                    ...prev,
+                    speciesFound: updatedSpeciesFound,
+                };
+            });
 
             setSelectedButterfly({
                 binomialName: "",
@@ -119,7 +125,6 @@ const ChecklistForm = () => {
             if (data.countSaved) {
                 toast.success("Form submitted successfully.");
                 localStorage.removeItem("butterfly-count");
-                setSpecies([]);
                 setShowSuccess(true);
                 setCurrentTab("user");
             }
@@ -134,37 +139,36 @@ const ChecklistForm = () => {
 
     async function submitChecklist(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        try {
-            setIsLoading(true);
-            const data = await validateUser(checklistData.email);
-            if (data?.userVerified) {
-                let distanceCovered;
-                try {
-                    const location =
-                        window.navigator && window.navigator.geolocation;
-                    if (location) {
-                        location.getCurrentPosition(async (position) => {
-                            const coor2 = `${position.coords.latitude}, ${position.coords.longitude}`;
+        setIsLoading(true);
+        const data = await validateUser(checklistData.email);
 
-                            distanceCovered = getDistanceFromLatLonInKm(
-                                checklistData.coordinates,
-                                coor2
-                            );
-                            await submitCounts(distanceCovered);
-                        });
-                    } else {
-                        await submitCounts(0);
-                    }
-                } catch (error: any) {
-                    if (!error.response.data.countSaved)
-                        toast.error("Failed to submit form. Try again!");
+        if (data?.userVerified) {
+            let distanceCovered;
+            try {
+                const location =
+                    window.navigator && window.navigator.geolocation;
+                if (location) {
+                    location.getCurrentPosition(async (position) => {
+                        const coor2 = `${position.coords.latitude}, ${position.coords.longitude}`;
+
+                        distanceCovered = getDistanceFromLatLonInKm(
+                            checklistData.coordinates,
+                            coor2
+                        );
+                        await submitCounts(distanceCovered);
+                    });
+                } else {
+                    await submitCounts(0);
                 }
+            } catch (error: any) {
+                if (!error.response.data.countSaved)
+                    toast.error("Failed to submit form. Try again!");
             }
-        } catch (error: any) {
-            if (!error.response.data.userVerified) setIsSignUpFormOpen(true);
-        } finally {
-            setIsLoading(false);
+        } else {
+            setIsSignUpFormOpen(true);
         }
+
+        setIsLoading(false);
     }
 
     return (
@@ -214,7 +218,7 @@ const ChecklistForm = () => {
                     onChange={findBinomialName}
                 />
                 <div
-                    className={`absolute w-full h-60 scrollbar-thin overflow-y-scroll bg-white top-[calc(100%+.25rem)] rounded-md border p-3 shadow-lg ${
+                    className={`absolute w-full h-60 scrollbar-thin overflow-y-scroll bg-white z-[1] top-[calc(100%+.25rem)] rounded-md border p-3 shadow-lg ${
                         showBinomialSearch ? "block" : "hidden"
                     }`}
                 >
@@ -260,15 +264,11 @@ const ChecklistForm = () => {
             <div style={{ marginBottom: "3rem" }}>
                 <h1 className="text-lg font-medium">Species List</h1>
                 <hr />
-                <div className="my-5">
-                    {species.length !== 0 ? (
-                        species.map((specie, i) => (
+                <div className="my-5 max-h-[500px] overflow-hidden overflow-y-scroll scrollbar-thin">
+                    {checklistData.speciesFound.length !== 0 ? (
+                        checklistData.speciesFound.map((specie, i) => (
                             <React.Fragment key={i}>
-                                <SpeciesListCard
-                                    specie={specie}
-                                    setSpecies={setSpecies}
-                                    index={i}
-                                />
+                                <SpeciesListCard specie={specie} index={i} />
                                 <hr />
                             </React.Fragment>
                         ))
@@ -279,7 +279,7 @@ const ChecklistForm = () => {
                     )}
                 </div>
             </div>
-            {isSignUpFormOpen && <SignUpForm setSpecies={setSpecies} />}
+            {isSignUpFormOpen && <SignUpForm />}
         </form>
     );
 };

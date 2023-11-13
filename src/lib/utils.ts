@@ -46,3 +46,12 @@ export function getDistanceFromLatLonInKm(coor1: string, coor2: string) {
 function deg2rad(deg: number) {
     return deg * (Math.PI / 180);
 }
+
+export const getCurrentTime = () => {
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, "0");
+    const minutes = now.getMinutes().toString().padStart(2, "0");
+
+    const formattedTime = `${hours}:${minutes}`;
+    return formattedTime;
+};

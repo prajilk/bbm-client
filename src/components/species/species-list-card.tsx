@@ -2,21 +2,17 @@ import { useGlobalContext } from "@/context/store";
 import { ButterflyProps } from "@/lib/types";
 import { ImageOff, Minus, Plus, X } from "lucide-react";
 import Image from "next/image";
-import { Dispatch, SetStateAction } from "react";
 
 const SpeciesListCard = ({
     specie,
     index,
-    setSpecies,
 }: {
     specie: ButterflyProps;
-    setSpecies: Dispatch<SetStateAction<ButterflyProps[]>>;
     index: number;
 }) => {
     const { checklistData, setChecklistData } = useGlobalContext();
 
     function removeSpecies() {
-        setSpecies((prev) => prev.filter((_, i) => i !== index));
         setChecklistData((prev) => ({
             ...prev,
             speciesFound: prev.speciesFound.filter((_, i) => i !== index),
