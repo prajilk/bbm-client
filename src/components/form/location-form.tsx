@@ -18,6 +18,7 @@ import { useGlobalContext } from "@/context/store";
 import axios from "@/config/axios.config";
 import { useState } from "react";
 import { Loader } from "lucide-react";
+import { getElevation } from "@/lib/api/get-elevation";
 
 const LocationForm = () => {
     const { setCurrentTab, checklistData, setChecklistData } =
@@ -67,8 +68,9 @@ const LocationForm = () => {
                     );
                     try {
                         setIsFetchingElevation(true);
-                        const response = await axios.get(
-                            `/elevation?latitude=${position.coords.latitude}&longitude=${position.coords.longitude}`
+                        const response = await getElevation(
+                            position.coords.latitude,
+                            position.coords.longitude
                         );
                         if (response?.data?.elevation)
                             form.setValue(

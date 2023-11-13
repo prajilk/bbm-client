@@ -11,7 +11,6 @@ import SpeciesListCard from "../species/species-list-card";
 import SpeciesNotFound from "../species/species-not-found";
 import SearchResultCard from "../species/search-result-card";
 import { useGlobalContext } from "@/context/store";
-import axios from "@/config/axios.config";
 import { saveChecklist } from "@/lib/api/save-checklist";
 import SignUpForm from "./signup-form";
 import { getDistanceFromLatLonInKm } from "@/lib/utils";

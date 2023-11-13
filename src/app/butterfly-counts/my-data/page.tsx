@@ -1,31 +1,12 @@
 import Container from "@/components/container";
-import axios from "@/config/axios.config";
-import { ChecklistProps } from "@/lib/types";
 import Image from "next/image";
-import { headers } from "next/headers";
 import { formateDateString } from "@/lib/utils";
 import React from "react";
-import { revalidatePath } from "next/cache";
 import ImageLinks from "./image-links";
-
-async function getData() {
-    revalidatePath("/butterfly-counts/my-data");
-    try {
-        const headerSequence = headers();
-        const cookie = headerSequence.get("cookie");
-        const { data } = await axios.get("/api/butterfly-count", {
-            headers: {
-                Cookie: `${cookie}`,
-            },
-        });
-        return data.countData as ChecklistProps[];
-    } catch (error) {
-        return null;
-    }
-}
+import { getButterflyCounts } from "@/lib/api/butterfky-counts";
 
 const MyData = async () => {
-    const countData = await getData();
+    const countData = await getButterflyCounts();
 
     return (
         <div className="w-full bg-zinc-100">

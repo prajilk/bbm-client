@@ -1,7 +1,6 @@
 "use client";
 
 import Container from "@/components/container";
-import { Button } from "@/components/ui/button";
 import {
     Form,
     FormControl,
@@ -13,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import LoadingButton from "@/components/ui/loading-button";
 import axios from "@/config/axios.config";
+import { login } from "@/lib/api/login";
 import { AuthSchema } from "@/lib/zodSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { setCookie } from "cookies-next";
@@ -37,7 +37,7 @@ const Login = () => {
     async function onSubmit(values: z.infer<typeof AuthSchema>) {
         try {
             setIsLoading(true);
-            const { data } = await axios.post("/api/user/login", values);
+            const data = await login(values);
             setCookie(
                 "user",
                 btoa(
