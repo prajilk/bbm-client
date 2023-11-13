@@ -60,7 +60,7 @@ const ButterflyCounts = () => {
     useEffect(() => {
         const bCounts = localStorage.getItem("butterfly-count");
         if (bCounts !== null) getResults(bCounts);
-    }, []);
+    }, [getResults]);
 
     return (
         <Container className="py-16 md:pt-24">

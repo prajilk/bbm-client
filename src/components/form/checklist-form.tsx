@@ -13,7 +13,7 @@ import SearchResultCard from "../species/search-result-card";
 import { useGlobalContext } from "@/context/store";
 import { saveChecklist } from "@/lib/api/save-checklist";
 import SignUpForm from "./signup-form";
-import { getCurrentTime, getDistanceFromLatLonInKm } from "@/lib/utils";
+import { getDistanceFromLatLonInKm } from "@/lib/utils";
 import { validateUser } from "@/lib/api/validate-user";
 
 const ChecklistForm = () => {

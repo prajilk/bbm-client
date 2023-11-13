@@ -15,23 +15,22 @@ import {
     FormMessage,
 } from "../ui/form";
 import { useGlobalContext } from "@/context/store";
-import axios from "@/config/axios.config";
 import { useState } from "react";
 import { Loader } from "lucide-react";
 import { getElevation } from "@/lib/api/get-elevation";
+import { getCurrentTime } from "@/lib/utils";
 
 const LocationForm = () => {
     const { setCurrentTab, checklistData, setChecklistData } =
         useGlobalContext();
     const [isFetchingElevation, setIsFetchingElevation] = useState(false);
-    const [isInvalidEndTime, setIsInvalidEndTime] = useState(false);
 
     const form = useForm<z.infer<typeof ZodLocationSchema>>({
         resolver: zodResolver(ZodLocationSchema),
         defaultValues: {
             date: checklistData.date,
             startTime: checklistData.startTime,
-            endTime: checklistData.endTime,
+            endTime: getCurrentTime(),
             location: checklistData.location,
             coordinates: checklistData.coordinates,
             altitude: checklistData.altitude,
@@ -42,18 +41,8 @@ const LocationForm = () => {
     });
 
     async function onSubmit(values: z.infer<typeof ZodLocationSchema>) {
-        setIsInvalidEndTime(false);
-        const { startTime, endTime } = values;
-
-        const startTimeDate = new Date(`1970-01-01T${startTime ?? "00:00"}`);
-        const endTimeDate = new Date(`1970-01-01T${endTime ?? "00:00"}`);
-        if (endTimeDate < startTimeDate) {
-            setIsInvalidEndTime(true);
-            scrollTo({ top: 100 });
-        } else {
-            setChecklistData((prev) => ({ ...prev, ...values }));
-            setCurrentTab("checklist");
-        }
+        setChecklistData((prev) => ({ ...prev, ...values }));
+        setCurrentTab("checklist");
     }
 
     function getMyLocation() {
@@ -118,7 +107,6 @@ const LocationForm = () => {
                         </FormItem>
                     )}
                 />
-                {/* <div className="grid grid-cols-2 gap-2"> */}
                 <FormField
                     control={form.control}
                     name="startTime"
@@ -140,37 +128,6 @@ const LocationForm = () => {
                         </FormItem>
                     )}
                 />
-                {/* <FormField
-                        control={form.control}
-                        name="endTime"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormControl>
-                                    <div className="space-y-1" id="endTime">
-                                        <Label htmlFor="endTime">
-                                            End Time
-                                        </Label>
-                                        <Input
-                                            id="endTime"
-                                            type="time"
-                                            {...field}
-                                            onChange={(e) => {
-                                                field.onChange(e.target.value);
-                                                setIsInvalidEndTime(false);
-                                            }}
-                                        />
-                                    </div>
-                                </FormControl>
-                                <FormMessage />
-                                {isInvalidEndTime && (
-                                    <p className="text-xs text-destructive">
-                                        End time must be greater than start time
-                                    </p>
-                                )}
-                            </FormItem>
-                        )}
-                    /> */}
-                {/* </div> */}
                 <FormField
                     control={form.control}
                     name="location"
