@@ -5,7 +5,11 @@ export async function deleteCount(id: string, user: string) {
     const adminCookie = getCookie("admin");
 
     try {
-        await axios.get("/test");
+        await axios.get("/test", {
+            headers: {
+                Cookie: `admin=${adminCookie}`,
+            },
+        });
         const { data } = await axios.delete(`/api/admin/counts/${id}/${user}`, {
             headers: {
                 Cookie: `admin=${adminCookie}`,
