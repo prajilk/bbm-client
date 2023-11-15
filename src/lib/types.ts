@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { ZodLocationSchema, ZodUserSchema } from "./zodSchemas";
+import { MouseEvent } from "react";
 
 export type ButterflyProps = {
     commonName: string;
@@ -28,15 +29,18 @@ export type LoadingButtonProps = {
     className?: string;
     disabled?: boolean;
     loader: boolean;
+    onClick?: () => void;
+};
+
+export type Species = {
+    commonName: string;
+    binomialName: string;
+    image?: string;
+    count: number;
 };
 
 export type ChecklistProps = z.infer<typeof ZodUserSchema> &
     z.infer<typeof ZodLocationSchema> & {
         distanceCovered?: number;
-        speciesFound: {
-            commonName: string;
-            binomialName: string;
-            image?: string;
-            count: number;
-        }[];
+        speciesFound: Species[];
     };

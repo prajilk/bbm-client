@@ -15,7 +15,7 @@ import {
     FormMessage,
 } from "../ui/form";
 import { useGlobalContext } from "@/context/store";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Loader } from "lucide-react";
 import { getElevation } from "@/lib/api/get-elevation";
 import { getCurrentTime } from "@/lib/utils";
@@ -44,6 +44,10 @@ const LocationForm = () => {
         setChecklistData((prev) => ({ ...prev, ...values }));
         setCurrentTab("checklist");
     }
+
+    useEffect(() => {
+        form.setValue("startTime", getCurrentTime());
+    }, [form]);
 
     function getMyLocation() {
         const location = window.navigator && window.navigator.geolocation;

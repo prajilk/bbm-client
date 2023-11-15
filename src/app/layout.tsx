@@ -4,6 +4,7 @@ import Navbar from "@/components/navbar/navbar";
 import Footer from "@/components/footer";
 import { GlobalContextProvider } from "@/context/store";
 import { Toaster } from "sonner";
+import NavbarVisibility from "@/components/navbar/navbar-visibility";
 
 export const metadata: Metadata = {
     title: "Create Next App",
@@ -26,7 +27,9 @@ export default function RootLayout({
                 }}
             >
                 <GlobalContextProvider>
-                    <Navbar />
+                    <NavbarVisibility>
+                        <Navbar />
+                    </NavbarVisibility>
                     <main>{children}</main>
                     <Footer />
                     <Toaster richColors position="top-center" />

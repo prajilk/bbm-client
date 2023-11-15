@@ -9,7 +9,7 @@ const MyData = async () => {
     const countData = await getButterflyCounts();
 
     return (
-        <div className="w-full bg-zinc-100">
+        <div className="w-full bg-zinc-100 min-h-screen">
             <Container className="py-16 md:py-24 px-2 max-w-5xl">
                 <h1 className="font-semibold text-xl md:text-2xl">
                     My Counts Data
