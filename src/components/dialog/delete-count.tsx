@@ -14,17 +14,16 @@ import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
+import { deleteCount } from "@/lib/api/admin/delete-count";
 
 const DeleteCount = ({ id, user }: { id: string; user: string }) => {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
 
-    async function deleteCount() {
+    async function handleDelete() {
         try {
             setIsLoading(true);
-            const { data } = await axios.delete(
-                `/api/admin/counts/${id}/${user}`
-            );
+            const data = await deleteCount(id, user);
             if (data?.deleted) {
                 router.refresh();
                 toast.success("Deleted successfully");
@@ -57,7 +56,7 @@ const DeleteCount = ({ id, user }: { id: string; user: string }) => {
                         Cancel
                     </DialogClose>
                     <Button
-                        onClick={deleteCount}
+                        onClick={handleDelete}
                         className="bg-destructive px-2.5 py-1.5 rounded-md text-white text-sm hover:bg-red-700 w-fit"
                         disabled={isLoading}
                     >
