@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { getCounts } from "@/lib/api/admin/get-counts";
 import React from "react";
-import CountCard from "@/components/count/count-card";
 import {
     Sheet,
     SheetClose,
@@ -12,7 +11,6 @@ import {
     SheetTrigger,
 } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
-import CountsContainer from "@/components/count/counts-container";
 import AllCountsContainer from "@/components/count/all-counts-container";
 
 const Admin = async () => {

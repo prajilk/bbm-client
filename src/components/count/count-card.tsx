@@ -6,6 +6,7 @@ import { formateDateString } from "@/lib/utils";
 import Image from "next/image";
 import React from "react";
 import DeleteCount from "../dialog/delete-count";
+import Link from "next/link";
 
 const CountCard = ({
     count,
@@ -21,7 +22,15 @@ const CountCard = ({
         <div className="bg-white rounded-lg w-full shadow-sm p-5 border mb-2">
             <div className="flex justify-between items-center">
                 <h1 className="font-semibold">Count {i + 1}:</h1>
-                <DeleteCount id={count.data._id} user={count.user} />
+                <div className="flex items-center gap-2">
+                    <Link
+                        href={`/admin/edit?count-id=${count.data._id}&user-id=${count.user}`}
+                        className="border border-primaryGreen px-2 py-1 rounded-md text-xs text-primaryGreen hover:bg-green-50"
+                    >
+                        edit
+                    </Link>
+                    <DeleteCount id={count.data._id} user={count.user} />
+                </div>
             </div>
             <hr className="my-2" />
             <div className="grid grid-cols-1 md:grid-cols-3">

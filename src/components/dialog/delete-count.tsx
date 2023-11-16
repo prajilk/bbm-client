@@ -8,7 +8,6 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "../ui/dialog";
-import axios from "@/config/axios.config";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";

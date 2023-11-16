@@ -93,6 +93,12 @@ body::-webkit-scrollbar {
 .scrollbar-thin::-webkit-scrollbar {
     @apply w-1.5;
 }
+.scrollbar-thin-hor::-webkit-scrollbar {
+    @apply h-1.5;
+}
+.scrollbar-thin-hor::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-gray-300;
+}
 .scrollbar-thin::-webkit-scrollbar-thumb {
     @apply rounded-full bg-gray-300;
 }
