@@ -2,12 +2,12 @@
 const nextConfig = {
     reactStrictMode: false,
     images: {
-        remotePatterns: [{
-            hostname: 'upload.wikimedia.org',
-            pathname: '/wikipedia/commons/thumb/**',
-            port: '',
-            protocol: 'https'
-        }]
+        remotePatterns: [
+            {
+                protocol: "https",
+                hostname: "**",
+            },
+        ],
     }
 }
 
