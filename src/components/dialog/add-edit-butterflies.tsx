@@ -72,7 +72,7 @@ const AddEditButterflies = ({
                 table.options.meta?.setData([...ButterflyJson]);
             }
         } catch (error) {
-            toast.error("Unable to add new data");
+            toast.error("Unable to perform the operation!");
         }
     }
 

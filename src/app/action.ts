@@ -47,6 +47,7 @@ export async function addButterflyAction(formData: FormData) {
         binomialName: formData.get("binomialName")?.toString(),
         image: formData.get("image")?.toString(),
     };
+    console.log(data);
 
     if (data.commonName && data.binomialName) {
         ButterflyJson.push({
@@ -60,8 +61,9 @@ export async function addButterflyAction(formData: FormData) {
     try {
         await writeFilePromise();
     } catch (error) {
+        console.log(error);
         return {
-            error: "Something went wrong! Unable to delete data.",
+            error: "Something went wrong! Unable to add data.",
         };
     }
 }
@@ -88,7 +90,7 @@ export async function editButterflyAction(formData: FormData) {
         await writeFilePromise();
     } catch (error) {
         return {
-            error: "Something went wrong! Unable to delete data.",
+            error: "Something went wrong! Unable to update data.",
         };
     }
 }
