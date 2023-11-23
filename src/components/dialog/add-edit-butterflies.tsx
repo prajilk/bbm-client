@@ -161,7 +161,12 @@ const AddEditButterflies = ({
                     </DialogClose>
                     <Button
                         className="bg-primaryGreen px-2.5 py-1.5 rounded-md text-white text-sm hover:bg-green-600 w-fit"
-                        disabled={(data.binomialName || data.commonName) === ""}
+                        disabled={
+                            data.binomialName === "" ||
+                            data.commonName === "" ||
+                            !data.image?.startsWith("https://") ||
+                            !data.image?.startsWith("http://")
+                        }
                         type="submit"
                         form="addEditData"
                         size={"sm"}
