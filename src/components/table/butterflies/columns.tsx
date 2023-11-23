@@ -6,10 +6,9 @@ import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, ImageOff, Pencil } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 
 export type Butterflies = {
-    id: number;
+    _id: string;
     commonName: string;
     binomialName: string;
     image?: string;
@@ -17,7 +16,7 @@ export type Butterflies = {
 
 export const columns: ColumnDef<Butterflies>[] = [
     {
-        accessorKey: "id",
+        accessorKey: "_id",
         header: "Id",
     },
     {
@@ -72,11 +71,11 @@ export const columns: ColumnDef<Butterflies>[] = [
         header: "Edit",
         cell: ({ row, table }) => {
             return (
-                <>
+                <div className="flex gap-1">
                     <AddEditButterflies
                         action="edit"
                         table={table}
-                        id={row.original.id}
+                        id={row.original._id}
                     >
                         <Button
                             className="bg-green-100 rounded-full hover:bg-green-200 duration-300"
@@ -85,8 +84,8 @@ export const columns: ColumnDef<Butterflies>[] = [
                             <Pencil size={15} className="text-primaryGreen" />
                         </Button>
                     </AddEditButterflies>
-                    <DeleteButterfly id={row.original.id} table={table} />
-                </>
+                    <DeleteButterfly id={row.original._id} table={table} />
+                </div>
             );
         },
     },

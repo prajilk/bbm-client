@@ -1,3 +1,5 @@
+"use client";
+
 import {
     Dialog,
     DialogClose,
@@ -10,12 +12,12 @@ import {
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import ButterflyJson from "@/lib/butterflies_with_images.json";
-import { useState } from "react";
-import { Species } from "@/lib/types";
-import { addButterflyAction, editButterflyAction } from "@/app/action";
+import { FormEvent, useState } from "react";
 import { toast } from "sonner";
 import { Table } from "@tanstack/react-table";
+import { Butterflies } from "../table/butterflies/columns";
+import { updateButterfly } from "@/lib/api/admin/update-butterfly";
+import { addButterfly } from "@/lib/api/admin/add-butterfly";
 
 const AddEditButterflies = ({
     id,
@@ -23,56 +25,75 @@ const AddEditButterflies = ({
     action,
     children,
 }: {
-    id?: number;
+    id?: string;
     action: "add" | "edit";
     table: Table<any>;
     children: React.ReactNode;
 }) => {
-    const index = ButterflyJson.findIndex((value) => value.id === id);
-    const [data, setData] = useState<Omit<Species, "count">>(
+    const butterfly = table.options.meta?.data.find(
+        (value: Butterflies) => value._id === id
+    ) as Butterflies;
+
+    const [isLoading, setIsLoading] = useState(false);
+    const [data, setData] = useState<Butterflies>(
         id
             ? {
-                  commonName: ButterflyJson[index].commonName,
-                  binomialName: ButterflyJson[index].binomialName,
-                  image: ButterflyJson[index].image,
+                  _id: butterfly?._id,
+                  commonName: butterfly?.commonName,
+                  binomialName: butterfly?.binomialName,
+                  image: butterfly?.image,
               }
             : {
+                  _id: "",
                   commonName: "",
                   binomialName: "",
                   image: "",
               }
     );
-    async function handleAction(formData: FormData) {
+    async function handleAction(e: FormEvent<HTMLFormElement>) {
+        e.preventDefault();
         try {
-            const result =
-                action === "add"
-                    ? await addButterflyAction(formData)
-                    : await editButterflyAction(formData);
-            if (result?.error) toast.error(result.error);
-            // Delete BUTTERFLY from state
-            else {
-                if (action === "add") {
-                    ButterflyJson.push({
-                        ...data,
-                        id: ButterflyJson.length + 1,
-                    });
+            setIsLoading(true);
+            if (action === "add") {
+                const result = await addButterfly({
+                    commonName: data.commonName,
+                    binomialName: data.binomialName,
+                    image: data.image,
+                });
+                if (result?.error || result.id === null)
+                    toast.error(result.error);
+                else {
+                    table.options.meta?.setData((prev) => [
+                        ...prev,
+                        {
+                            _id: result.id,
+                            commonName: data.commonName,
+                            binomialName: data.binomialName,
+                            image: data.image,
+                        },
+                    ]);
                     toast.success("New Butterfly added successfully!");
                     setData({
+                        _id: "",
                         commonName: "",
                         binomialName: "",
                         image: "",
                     });
-                } else {
-                    ButterflyJson[index] = {
-                        id: id!,
-                        ...data,
-                    };
+                }
+            } else {
+                const result = await updateButterfly(id!, data);
+                if (result?.error) toast.error(result.error);
+                else {
+                    table.options.meta?.setData((prev) =>
+                        prev.map((value) => (value._id === id ? data : value))
+                    );
                     toast.success("Butterfly updated successfully!");
                 }
-                table.options.meta?.setData([...ButterflyJson]);
             }
         } catch (error) {
             toast.error("Unable to perform the operation!");
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -85,8 +106,8 @@ const AddEditButterflies = ({
                         Edit Butterfly
                     </DialogTitle>
                 </DialogHeader>
-                <form action={handleAction} id="addEditData">
-                    <input type="number" value={id} hidden name="id" />
+                <form onSubmit={handleAction} id="addEditData">
+                    <input type="number" defaultValue={id} hidden name="id" />
                     <Label>Common Name</Label>
                     <Input
                         type="text"
@@ -132,7 +153,7 @@ const AddEditButterflies = ({
                     <span className="text-muted-foreground text-sm">
                         Preview:
                     </span>
-                    <img src={data.image} width={80} className="mt-2" />
+                    <img src={data.image} width={80} className="mt-2" alt="" />
                 </form>
                 <DialogFooter className="flex-row gap-1 justify-end">
                     <DialogClose className="bg-gray-200 px-2.5 py-1.5 rounded-md text-sm w-fit">

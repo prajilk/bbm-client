@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { ZodLocationSchema, ZodUserSchema } from "./zodSchemas";
-import { MouseEvent } from "react";
 
 export type ButterflyProps = {
     commonName: string;

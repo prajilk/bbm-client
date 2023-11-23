@@ -5,7 +5,6 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
-import ButterfliesJson from "../../lib/butterflies_with_images.json";
 import { ButterflyProps } from "@/lib/types";
 import SpeciesListCard from "../species/species-list-card";
 import SpeciesNotFound from "../species/species-not-found";
@@ -15,6 +14,10 @@ import { saveChecklist } from "@/lib/api/save-checklist";
 import SignUpForm from "./signup-form";
 import { getDistanceFromLatLonInKm } from "@/lib/utils";
 import { validateUser } from "@/lib/api/validate-user";
+import { useLiveQuery } from "dexie-react-hooks";
+import { db } from "@/config/dexie.config";
+
+const { butterflies } = db;
 
 const ChecklistForm = () => {
     const {
@@ -40,27 +43,41 @@ const ChecklistForm = () => {
         { commonName: string; binomialName: string; image?: string }[]
     >([]);
 
+    const allButterflies = useLiveQuery(() => butterflies.toArray(), []);
+
     function findCommonName(e: ChangeEvent<HTMLInputElement>) {
         setCommonInput(e.target.value);
         setCommonSearch(true);
-        const result = ButterfliesJson.filter((butterfly) =>
-            butterfly.commonName
-                .toLowerCase()
-                .includes(e.target.value.toLowerCase())
-        );
-        setSearchResult(result);
+        const result = allButterflies
+            ?.filter((butterfly) =>
+                butterfly.commonName
+                    .toLowerCase()
+                    .includes(e.target.value.toLowerCase())
+            )
+            .map((butterfly) => ({
+                commonName: butterfly.commonName,
+                binomialName: butterfly.binomialName,
+                image: butterfly.image,
+            }));
+        setSearchResult(result || []);
     }
 
     function findBinomialName(e: ChangeEvent<HTMLInputElement>) {
         setBinomialInput(e.target.value);
         setBinomialSearch(true);
-        const result = ButterfliesJson.filter((butterfly) =>
-            butterfly.binomialName
-                .toLowerCase()
-                .includes(e.target.value.toLowerCase())
-        );
+        const result = allButterflies
+            ?.filter((butterfly) =>
+                butterfly.binomialName
+                    .toLowerCase()
+                    .includes(e.target.value.toLowerCase())
+            )
+            .map((butterfly) => ({
+                commonName: butterfly.commonName,
+                binomialName: butterfly.binomialName,
+                image: butterfly.image,
+            }));
         setCommonInput(selectedButterfly?.commonName);
-        setSearchResult(result);
+        setSearchResult(result || []);
     }
 
     function addSpecies() {

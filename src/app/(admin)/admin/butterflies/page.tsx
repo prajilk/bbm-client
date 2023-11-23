@@ -8,12 +8,13 @@ import {
     SheetTitle,
     SheetTrigger,
 } from "@/components/ui/sheet";
+import { getButterflies } from "@/lib/api/admin/get-bitterflies";
 import { Menu } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import ButterfliesJSON from "@/lib/butterflies_with_images.json";
 
 const page = async () => {
+    const data = await getButterflies();
     return (
         <>
             <div className="lg:flex bg-zinc-100">
@@ -115,15 +116,12 @@ const page = async () => {
                                 Butterfly List
                             </h1>
                             <span className="text-sm text-muted-foreground">
-                                Total Butterflies: {ButterfliesJSON.length || 0}
+                                Total Butterflies: {data.length || 0}
                             </span>
                         </div>
                         <hr className="my-5" />
                         <div className="container mx-auto py-5">
-                            <DataTable
-                                columns={columns}
-                                data={ButterfliesJSON}
-                            />
+                            <DataTable columns={columns} data={data} />
                         </div>
                     </div>
                 </div>

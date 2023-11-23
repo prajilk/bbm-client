@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { Loader2, Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
 import {
@@ -15,40 +15,29 @@ import {
 } from "../ui/dialog";
 import { Butterflies } from "../table/butterflies/columns";
 import { Table } from "@tanstack/react-table";
-import { deleteButterflyAction } from "@/app/action";
-import ButterflyJson from "@/lib/butterflies_with_images.json";
 import { toast } from "sonner";
+import { deleteButterfly } from "@/lib/api/admin/delete-butterfly";
 
 const DeleteButterfly = ({
     id,
     table,
 }: {
-    id: number;
+    id: string;
     table: Table<Butterflies>;
 }) => {
     const [isLoading, setIsLoading] = useState(false);
 
-    async function handleDelete(formData: FormData) {
+    async function handleDelete(e: FormEvent<HTMLFormElement>) {
+        e.preventDefault();
         try {
             setIsLoading(true);
             // Delete BUTTERFLY from Json
-            const result = await deleteButterflyAction(formData);
-            if (result?.error) toast.error(result.error);
-            // Delete BUTTERFLY from state
+            const result = await deleteButterfly(id);
+            if (result?.error) toast.error("Unable to delete data!");
             else {
-                const indexToDelete = ButterflyJson.findIndex(
-                    (obj) => obj.id === id
+                table.options.meta?.setData((prev) =>
+                    prev.filter((value) => value._id !== id)
                 );
-
-                if (indexToDelete !== -1) {
-                    // Use splice to remove the object at the found index
-                    ButterflyJson.splice(indexToDelete, 1);
-                } else {
-                    throw new Error(
-                        "Error writing to JSON file: Invalid Index"
-                    );
-                }
-                table.options.meta?.setData([...ButterflyJson]);
                 toast.success("Data deleted successfully!");
             }
         } catch (error) {
@@ -62,7 +51,7 @@ const DeleteButterfly = ({
         <Dialog>
             <DialogTrigger asChild>
                 <Button
-                    className="bg-red-100 rounded-full hover:bg-red-200 duration-300 mt-1 md:ms-2 md:mt-0"
+                    className="bg-red-100 rounded-full hover:bg-red-200 duration-300"
                     size={"sm"}
                 >
                     <Trash2 size={15} className="text-destructive" />
@@ -83,7 +72,7 @@ const DeleteButterfly = ({
                     <DialogClose className="bg-gray-200 px-2.5 py-1.5 rounded-md text-sm w-fit">
                         Cancel
                     </DialogClose>
-                    <form action={handleDelete} className="m-0 p-0">
+                    <form onSubmit={handleDelete} className="m-0 p-0">
                         <input
                             type="number"
                             hidden
