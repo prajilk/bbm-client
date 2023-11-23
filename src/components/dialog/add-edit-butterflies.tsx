@@ -164,8 +164,10 @@ const AddEditButterflies = ({
                         disabled={
                             data.binomialName === "" ||
                             data.commonName === "" ||
-                            !data.image?.startsWith("https://") ||
-                            !data.image?.startsWith("http://")
+                            !(
+                                data.image?.startsWith("https://") ||
+                                data.image?.startsWith("http://")
+                            )
                         }
                         type="submit"
                         form="addEditData"
