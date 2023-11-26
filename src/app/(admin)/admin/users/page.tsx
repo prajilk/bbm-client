@@ -43,6 +43,14 @@ const page = async () => {
                                 Users
                             </Link>
                         </li>
+                        <li className="hover:bg-gray-100 rounded-md px-2 py-1">
+                            <Link
+                                href={"/admin/butterflies"}
+                                className="w-full block"
+                            >
+                                Butterflies
+                            </Link>
+                        </li>
                     </ul>
                 </div>
                 <div className="flex-1 min-h-screen">
@@ -73,6 +81,15 @@ const page = async () => {
                                             <SheetClose asChild>
                                                 <Link href={"/admin/users"}>
                                                     Users
+                                                </Link>
+                                            </SheetClose>
+                                        </li>
+                                        <li>
+                                            <SheetClose asChild>
+                                                <Link
+                                                    href={"/admin/butterflies"}
+                                                >
+                                                    Butterflies
                                                 </Link>
                                             </SheetClose>
                                         </li>
