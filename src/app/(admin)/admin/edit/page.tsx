@@ -51,6 +51,13 @@ const Edit = async ({
                                         <Link href={"/admin/users"}>Users</Link>
                                     </SheetClose>
                                 </li>
+                                <li>
+                                    <SheetClose asChild>
+                                        <Link href={"/admin/butterflies"}>
+                                            Butterflies
+                                        </Link>
+                                    </SheetClose>
+                                </li>
                             </ul>
                         </SheetContent>
                     </Sheet>
@@ -71,6 +78,14 @@ const Edit = async ({
                     <li className="hover:text-primaryGreen px-2 py-1">
                         <Link href={"/admin/users"} className="w-full block">
                             Users
+                        </Link>
+                    </li>
+                    <li className="hover:text-primaryGreen px-2 py-1">
+                        <Link
+                            href={"/admin/butterflies"}
+                            className="w-full block"
+                        >
+                            Butterflies
                         </Link>
                     </li>
                 </ul>
