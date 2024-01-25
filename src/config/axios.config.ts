@@ -1,7 +1,5 @@
 import axios from "axios";
-// https://api-bbm.vercel.app
-// http://localhost:5000
 export default axios.create({
-    baseURL: "https://api-bbm.vercel.app",
+    baseURL: process.env.NEXT_PUBLIC_SERVER_URL,
     withCredentials: true,
 });
